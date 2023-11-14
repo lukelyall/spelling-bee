@@ -7,10 +7,25 @@ import HexagonalButton from "./components/HexagonalButton"
 export default function App() {
 
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [inputText, setInputText] = React.useState('');
+  const [isCaretVisible, setIsCaretVisible] = React.useState(true);
 
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   }
+
+  React.useEffect(() => {
+    const intervalId = setInterval(() => {
+      setIsCaretVisible((prev) => !prev);
+    }, 500);
+    return () => clearInterval(intervalId);
+  }, []);
+  const handleHexagonalButtonPress = (text) => {
+    setInputText(inputText + text);
+  };
+  const handleDeleteButtonPress = () => {
+    setInputText(inputText.slice(0, -1));
+  };
 
   return (
     <View style={styles.container}>
@@ -39,25 +54,30 @@ export default function App() {
         </View>
       </Modal>
 
+      <View style = {styles.spellingBeeText}>
+      <Text style={styles.beeText}>{inputText}</Text>
+        {isCaretVisible && <View style={styles.caret} />}
+      </View>
+
       <View style = {styles.topButton}>
-        <HexagonalButton onPress={() => console.log("Top Button Pressed")} buttonText = "F"/>
+        <HexagonalButton onPress={() => handleHexagonalButtonPress("F")} buttonText = "F"/>
       </View>
       <View style = {styles.topButtons}>
-        <HexagonalButton onPress={() => console.log("Top Left Button Pressed")} buttonText = "R"/>
-        <HexagonalButton onPress={() => console.log("Top Right Button Pressed")} buttonText = "Y"/>
+        <HexagonalButton onPress={() => handleHexagonalButtonPress("R")} buttonText = "R"/>
+        <HexagonalButton onPress={() => handleHexagonalButtonPress("Y")} buttonText = "Y"/>
       </View>
       <View style = {styles.centerButton}>
-        <HexagonalButton buttonColor="rgb(247,218,33)" onPress={() => console.log("Center Button Pressed")} buttonText = "L"/>
+        <HexagonalButton buttonColor="rgb(247,218,33)" onPress={() => handleHexagonalButtonPress("L")} buttonText = "L"/>
       </View>
       <View style = {styles.bottomButtons}>
-        <HexagonalButton onPress={() => console.log("Bottom Left Button Pressed")} buttonText = "G"/>
-        <HexagonalButton onPress={() => console.log("Bottom Right Button Pressed")} buttonText = "I"/>
+        <HexagonalButton onPress={() => handleHexagonalButtonPress("G")} buttonText = "G"/>
+        <HexagonalButton onPress={() => handleHexagonalButtonPress("I")} buttonText = "I"/>
       </View>
       <View style = {styles.bottomButton}>
-        <HexagonalButton onPress={() => console.log("Bottom Button Pressed")} buttonText = "O"/>
+        <HexagonalButton onPress={() => handleHexagonalButtonPress("O")} buttonText = "O"/>
       </View>
       <View style = {styles.footer}>
-        <Pressable style = {styles.footerButtons} onPress={() => console.log("Delete Button Pressed")}>
+        <Pressable style = {styles.footerButtons} onPress={handleDeleteButtonPress}>
           <Text style = {styles.footerText}>Delete</Text>
         </Pressable>
         <Pressable style = {styles.footerButtons} onPress={() => console.log("Enter Button Pressed")}>
@@ -79,7 +99,7 @@ const styles = StyleSheet.create({
     width: '90%',
     flexDirection: 'row',
     marginTop: 20,
-    marginBottom: 150,
+    marginBottom: 20,
   },
   listButton: {
     borderColor: 'rgb(230,230,230)',
@@ -92,9 +112,27 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: 'rgb(180,180,180)',
   },
+  spellingBeeText: {
+    flexDirection: 'row',
+    height: 180,
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  beeText: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginRight: 5,
+  },
+  caret: {
+    backgroundColor: 'black',
+    width: 2,
+    height: 30,
+    marginLeft: 1,
+  },
   topButton: {
     justifyContent: 'center',
     alignItems: 'center',
+    height: 50,
   },
   topButtons: {
     justifyContent: 'center',
@@ -116,6 +154,7 @@ const styles = StyleSheet.create({
   bottomButton: {
     justifyContent: 'center',
     alignItems: 'center',
+    height: 50,
   },
   footer: {
     flexDirection: 'row',
@@ -135,7 +174,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   modalContainer: {
-    marginTop: 133,
+    marginTop: 114,
     flex: 1,
   },
   modalContent: {

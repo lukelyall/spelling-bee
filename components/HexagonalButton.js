@@ -51,7 +51,7 @@ const HexagonalButton = ({ buttonColor, onPress, buttonText }) => {
     },
     buttonText: {
       color: 'black',
-      transform: "rotate(-90deg)",
+      transform: 'rotate(-90deg)',
       textAlign: 'center',
       fontSize: 30,
       fontWeight: 'bold',
