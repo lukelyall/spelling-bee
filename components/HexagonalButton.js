@@ -1,7 +1,13 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Pressable } from 'react-native';
 
-const HexagonalButton = ({ buttonColor }) => {
+const HexagonalButton = ({ buttonColor, onPress }) => {
+  const handlePress = () => {
+    if (onPress) {
+      onPress();
+    }
+  };
+
   const styles = {
     block: {
       width: 100,
@@ -11,7 +17,7 @@ const HexagonalButton = ({ buttonColor }) => {
     blockInner: {
       width: 100,
       height: 65,
-      backgroundColor: buttonColor || "rgb(200,200,200)",
+      backgroundColor: buttonColor || "rgb(230,230,230)",
     },
     blockBottom: {
       position: "absolute",
@@ -25,7 +31,7 @@ const HexagonalButton = ({ buttonColor }) => {
       borderRightWidth: 50,
       borderRightColor: "transparent",
       borderTopWidth: 25,
-      borderTopColor: buttonColor || "rgb(200,200,200)",
+      borderTopColor: buttonColor || "rgb(230,230,230)",
     },
     blockTop: {
       position: "absolute",
@@ -39,16 +45,16 @@ const HexagonalButton = ({ buttonColor }) => {
       borderRightWidth: 50,
       borderRightColor: "transparent",
       borderBottomWidth: 25,
-      borderBottomColor: buttonColor || "rgb(200,200,200)",
+      borderBottomColor: buttonColor || "rgb(230,230,230)",
     },
   };
 
   return (
-    <View style={styles.block}>
+    <Pressable style={styles.block} onPress = {handlePress}>
       <View style={styles.blockInner}/>
       <View style={styles.blockTop}/>
       <View style={styles.blockBottom}/>
-    </View>
+    </Pressable>
   );
 };
 
