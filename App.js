@@ -1,14 +1,26 @@
 import * as React from 'react'
 
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Pressable, Modal } from 'react-native';
+import { StyleSheet, Text, View, Pressable, Modal, FlatList } from 'react-native';
 import HexagonalButton from "./components/HexagonalButton"
+
+import dictionaryChunk1 from "./data/dictionary_chunk_1.json"
+import dictionaryChunk2 from "./data/dictionary_chunk_2.json"
+import dictionaryChunk3 from "./data/dictionary_chunk_3.json"
+import dictionaryChunk4 from "./data/dictionary_chunk_4.json"
+import dictionaryChunk5 from "./data/dictionary_chunk_5.json"
+import dictionaryChunk6 from "./data/dictionary_chunk_6.json"
+import dictionaryChunk7 from "./data/dictionary_chunk_7.json"
+import dictionaryChunk8 from "./data/dictionary_chunk_8.json"
+
+const dictionaryChunks = [dictionaryChunk1, dictionaryChunk2, dictionaryChunk3, dictionaryChunk4, dictionaryChunk5, dictionaryChunk6, dictionaryChunk7, dictionaryChunk8];
 
 export default function App() {
 
   const [modalVisible, setModalVisible] = React.useState(false);
   const [inputText, setInputText] = React.useState('');
   const [isCaretVisible, setIsCaretVisible] = React.useState(true);
+  const [validWords, setValidWords] = React.useState([]);
 
   const toggleModal = () => {
     setModalVisible(!modalVisible);
@@ -25,6 +37,24 @@ export default function App() {
   };
   const handleDeleteButtonPress = () => {
     setInputText(inputText.slice(0, -1));
+  };
+  const isWordValid = (word) => {
+    if(word.includes("L")){
+      const lowercasedWord = word.toLowerCase();
+      return dictionaryChunks.some((chunk) => chunk.hasOwnProperty(lowercasedWord));
+    }
+    else{
+      return false;
+    }
+  };
+  const handleEnterButtonPress = () => {
+    if (isWordValid(inputText) && !validWords.includes(inputText)) {
+      console.log(`${inputText} is a valid word!`);
+      setValidWords((prevList) => [...prevList, inputText.toLowerCase()]);
+      setInputText('');
+    } else {
+      console.log(`${inputText} is not a valid word or is already in the list.`);
+    }
   };
 
   return (
@@ -49,7 +79,13 @@ export default function App() {
               <Text style = {styles.listText}>Your Words</Text>
             </Pressable>
             <Text style = {styles.listText}>--------------------</Text>
-            <Text style = {styles.listText}>Modal Content</Text>
+            <FlatList
+              data={validWords}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <Text style={styles.listText}>{item}</Text>
+              )}
+            />
           </View>
         </View>
       </Modal>
@@ -80,7 +116,7 @@ export default function App() {
         <Pressable style = {styles.footerButtons} onPress={handleDeleteButtonPress}>
           <Text style = {styles.footerText}>Delete</Text>
         </Pressable>
-        <Pressable style = {styles.footerButtons} onPress={() => console.log("Enter Button Pressed")}>
+        <Pressable style = {styles.footerButtons} onPress={handleEnterButtonPress}>
           <Text style = {styles.footerText}>Enter</Text>
         </Pressable>
       </View>
@@ -116,18 +152,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 180,
     alignItems: 'center',
-    overflow: 'hidden',
   },
   beeText: {
     fontSize: 30,
     fontWeight: 'bold',
-    marginRight: 5,
   },
   caret: {
+    position: 'absolute',
     backgroundColor: 'black',
     width: 2,
     height: 30,
-    marginLeft: 1,
+    right: 0,
   },
   topButton: {
     justifyContent: 'center',
