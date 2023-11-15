@@ -15,12 +15,23 @@ import dictionaryChunk8 from "./data/dictionary_chunk_8.json"
 
 const dictionaryChunks = [dictionaryChunk1, dictionaryChunk2, dictionaryChunk3, dictionaryChunk4, dictionaryChunk5, dictionaryChunk6, dictionaryChunk7, dictionaryChunk8];
 
+const getRandomLetter = () => {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const randomIndex = Math.floor(Math.random() * alphabet.length);
+  return alphabet[randomIndex];
+}
+
 export default function App() {
 
   const [modalVisible, setModalVisible] = React.useState(false);
   const [inputText, setInputText] = React.useState('');
   const [isCaretVisible, setIsCaretVisible] = React.useState(true);
   const [validWords, setValidWords] = React.useState([]);
+  const [randomLetters, setRandomLetters] = React.useState([]);
+
+  React.useEffect(() => {
+    setRandomLetters(Array.from({ length: 7 }, () => getRandomLetter()));
+  }, []);
 
   const toggleModal = () => {
     setModalVisible(!modalVisible);
@@ -39,7 +50,7 @@ export default function App() {
     setInputText(inputText.slice(0, -1));
   };
   const isWordValid = (word) => {
-    if(word.includes("L")){
+    if(word.includes(randomLetters[3])){
       const lowercasedWord = word.toLowerCase();
       return dictionaryChunks.some((chunk) => chunk.hasOwnProperty(lowercasedWord));
     }
@@ -48,12 +59,16 @@ export default function App() {
     }
   };
   const handleEnterButtonPress = () => {
+    if (validWords.includes(inputText)) {
+      setInputText('');
+      console.log(`${inputText} is already in the list.`);
+    }
     if (isWordValid(inputText) && !validWords.includes(inputText)) {
       console.log(`${inputText} is a valid word!`);
-      setValidWords((prevList) => [...prevList, inputText.toLowerCase()]);
+      setValidWords((prevList) => [...prevList, inputText]);
       setInputText('');
     } else {
-      console.log(`${inputText} is not a valid word or is already in the list.`);
+      console.log(`${inputText} is not a valid word.`);
     }
   };
 
@@ -76,9 +91,8 @@ export default function App() {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Pressable onPress={toggleModal}>
-              <Text style = {styles.listText}>Your Words</Text>
+              <Text style = {styles.listText}>Your Words:</Text>
             </Pressable>
-            <Text style = {styles.listText}>--------------------</Text>
             <FlatList
               data={validWords}
               keyExtractor={(item, index) => index.toString()}
@@ -96,21 +110,21 @@ export default function App() {
       </View>
 
       <View style = {styles.topButton}>
-        <HexagonalButton onPress={() => handleHexagonalButtonPress("F")} buttonText = "F"/>
+        <HexagonalButton onPress={() => handleHexagonalButtonPress(randomLetters[0])} buttonText = {randomLetters[0]}/>
       </View>
       <View style = {styles.topButtons}>
-        <HexagonalButton onPress={() => handleHexagonalButtonPress("R")} buttonText = "R"/>
-        <HexagonalButton onPress={() => handleHexagonalButtonPress("Y")} buttonText = "Y"/>
+        <HexagonalButton onPress={() => handleHexagonalButtonPress(randomLetters[1])} buttonText = {randomLetters[1]}/>
+        <HexagonalButton onPress={() => handleHexagonalButtonPress(randomLetters[2])} buttonText = {randomLetters[2]}/>
       </View>
       <View style = {styles.centerButton}>
-        <HexagonalButton buttonColor="rgb(247,218,33)" onPress={() => handleHexagonalButtonPress("L")} buttonText = "L"/>
+        <HexagonalButton buttonColor="rgb(247,218,33)" onPress={() => handleHexagonalButtonPress(randomLetters[3])} buttonText = {randomLetters[3]}/>
       </View>
       <View style = {styles.bottomButtons}>
-        <HexagonalButton onPress={() => handleHexagonalButtonPress("G")} buttonText = "G"/>
-        <HexagonalButton onPress={() => handleHexagonalButtonPress("I")} buttonText = "I"/>
+        <HexagonalButton onPress={() => handleHexagonalButtonPress(randomLetters[4])} buttonText = {randomLetters[4]}/>
+        <HexagonalButton onPress={() => handleHexagonalButtonPress(randomLetters[5])} buttonText = {randomLetters[5]}/>
       </View>
       <View style = {styles.bottomButton}>
-        <HexagonalButton onPress={() => handleHexagonalButtonPress("O")} buttonText = "O"/>
+        <HexagonalButton onPress={() => handleHexagonalButtonPress(randomLetters[6])} buttonText = {randomLetters[6]}/>
       </View>
       <View style = {styles.footer}>
         <Pressable style = {styles.footerButtons} onPress={handleDeleteButtonPress}>
@@ -133,7 +147,6 @@ const styles = StyleSheet.create({
   },
   wordList: {
     width: '90%',
-    flexDirection: 'row',
     marginTop: 20,
     marginBottom: 20,
   },
@@ -142,7 +155,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 5,
     padding: 10,
-    width: '100%',
   },
   listText: {
     fontSize: 15,

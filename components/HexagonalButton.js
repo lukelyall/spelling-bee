@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Pressable, Text } from 'react-native';
+import { View, Pressable, Text, StyleSheet } from 'react-native';
 
 const HexagonalButton = ({ buttonColor, onPress, buttonText }) => {
   const handlePress = () => {
@@ -8,7 +8,7 @@ const HexagonalButton = ({ buttonColor, onPress, buttonText }) => {
     }
   };
 
-  const styles = {
+  const styles = StyleSheet.create({
     block: {
       width: 100,
       height: 55,
@@ -51,12 +51,12 @@ const HexagonalButton = ({ buttonColor, onPress, buttonText }) => {
     },
     buttonText: {
       color: 'black',
-      transform: 'rotate(-90deg)',
+      transform: [{ rotate: '-90deg' }],
       textAlign: 'center',
       fontSize: 30,
       fontWeight: 'bold',
     },
-  };
+  });
 
   return (
     <Pressable style={styles.block} onPress = {handlePress}>
