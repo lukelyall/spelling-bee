@@ -15,22 +15,40 @@ import dictionaryChunk8 from "./data/dictionary_chunk_8.json"
 
 const dictionaryChunks = [dictionaryChunk1, dictionaryChunk2, dictionaryChunk3, dictionaryChunk4, dictionaryChunk5, dictionaryChunk6, dictionaryChunk7, dictionaryChunk8];
 
-const getRandomLetter = () => {
-  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const randomIndex = Math.floor(Math.random() * alphabet.length);
-  return alphabet[randomIndex];
+const getRandomLetters = (availableLetters) => {
+  const randomIndex = Math.floor(Math.random() * availableLetters.length);
+  const chosenLetter = availableLetters[randomIndex];
+  availableLetters.splice(randomIndex, 1);
+  return chosenLetter;
 }
 
-export default function App() {
+const getRandomVowels = (availableVowels) => {
+  const randomIndex = Math.floor(Math.random() * availableVowels.length);
+  const chosenVowel = availableVowels[randomIndex];
+  availableVowels.splice(randomIndex, 1);
+  return chosenVowel;
+};
 
+export default function App() { 
+  const allVowels = 'AEIOU';
+  const [availableVowels, setAvailableVowels] = React.useState([...allVowels]);
+  const allLetters = 'BCDFGHJKLMNPQRSTVWXYZ';
+  const [availableLetters, setAvailableLetters] = React.useState([...allLetters]);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [inputText, setInputText] = React.useState('');
   const [isCaretVisible, setIsCaretVisible] = React.useState(true);
   const [validWords, setValidWords] = React.useState([]);
   const [randomLetters, setRandomLetters] = React.useState([]);
+  const [randomVowels, setRandomVowels] = React.useState([]);
 
   React.useEffect(() => {
-    setRandomLetters(Array.from({ length: 7 }, () => getRandomLetter()));
+    const newRandomLetters = Array.from({ length: 5 }, () => getRandomLetters(availableLetters));
+    setRandomLetters(newRandomLetters);
+  }, []);
+
+  React.useEffect(() => {
+    const newRandomVowels = Array.from({ length: 2 }, () => getRandomVowels(availableVowels));
+    setRandomVowels(newRandomVowels);
   }, []);
 
   const toggleModal = () => {
@@ -43,12 +61,15 @@ export default function App() {
     }, 500);
     return () => clearInterval(intervalId);
   }, []);
+
   const handleHexagonalButtonPress = (text) => {
     setInputText(inputText + text);
   };
+
   const handleDeleteButtonPress = () => {
     setInputText(inputText.slice(0, -1));
   };
+
   const isWordValid = (word) => {
     if(word.includes(randomLetters[3])){
       const lowercasedWord = word.toLowerCase();
@@ -58,6 +79,7 @@ export default function App() {
       return false;
     }
   };
+
   const handleEnterButtonPress = () => {
     if (validWords.includes(inputText)) {
       setInputText('');
@@ -91,7 +113,7 @@ export default function App() {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Pressable onPress={toggleModal}>
-              <Text style = {styles.listText}>Your Words:</Text>
+              <Text style = {styles.listText}>Tap Here to Close</Text>
             </Pressable>
             <FlatList
               data={validWords}
@@ -121,10 +143,10 @@ export default function App() {
       </View>
       <View style = {styles.bottomButtons}>
         <HexagonalButton onPress={() => handleHexagonalButtonPress(randomLetters[4])} buttonText = {randomLetters[4]}/>
-        <HexagonalButton onPress={() => handleHexagonalButtonPress(randomLetters[5])} buttonText = {randomLetters[5]}/>
+        <HexagonalButton onPress={() => handleHexagonalButtonPress(randomVowels[0])} buttonText = {randomVowels[0]}/>
       </View>
       <View style = {styles.bottomButton}>
-        <HexagonalButton onPress={() => handleHexagonalButtonPress(randomLetters[6])} buttonText = {randomLetters[6]}/>
+        <HexagonalButton onPress={() => handleHexagonalButtonPress(randomVowels[1])} buttonText = {randomVowels[1]}/>
       </View>
       <View style = {styles.footer}>
         <Pressable style = {styles.footerButtons} onPress={handleDeleteButtonPress}>
@@ -155,6 +177,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 5,
     padding: 10,
+    flexDirection: 'row',
   },
   listText: {
     fontSize: 15,
@@ -168,6 +191,20 @@ const styles = StyleSheet.create({
   beeText: {
     fontSize: 30,
     fontWeight: 'bold',
+  },
+  modalContainer: {
+    marginTop: 114,
+    flex: 1,
+  },
+  modalContent: {
+    borderColor: 'rgb(230,230,230)',
+    borderWidth: 2,
+    borderRadius: 5,
+    backgroundColor: 'white',
+    padding: 20,
+    width: '90%',
+    height: '80%',
+    alignSelf: 'center',
   },
   caret: {
     position: 'absolute',
@@ -219,19 +256,5 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 15,
-  },
-  modalContainer: {
-    marginTop: 114,
-    flex: 1,
-  },
-  modalContent: {
-    borderColor: 'rgb(230,230,230)',
-    borderWidth: 2,
-    borderRadius: 5,
-    backgroundColor: 'white',
-    padding: 20,
-    width: '90%',
-    height: '80%',
-    alignSelf: 'center',
   },
 });
