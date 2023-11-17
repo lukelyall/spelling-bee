@@ -35,6 +35,8 @@ export default function App() {
   const allLetters = 'BCDFGHJKLMNPQRSTVWXYZ';
   const [availableLetters, setAvailableLetters] = React.useState([...allLetters]);
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [errorModalVisible, setErrorModalVisible] = React.useState(false);
+  const [errorModalText, setErrorModalText] = React.useState('');
   const [inputText, setInputText] = React.useState('');
   const [isCaretVisible, setIsCaretVisible] = React.useState(true);
   const [validWords, setValidWords] = React.useState([]);
@@ -81,16 +83,25 @@ export default function App() {
   };
 
   const handleEnterButtonPress = () => {
-    if (validWords.includes(inputText)) {
-      setInputText('');
-      console.log(`${inputText} is already in the list.`);
-    }
     if (isWordValid(inputText) && !validWords.includes(inputText)) {
-      console.log(`${inputText} is a valid word!`);
       setValidWords((prevList) => [...prevList, inputText]);
       setInputText('');
-    } else {
-      console.log(`${inputText} is not a valid word.`);
+    } 
+    else if (validWords.includes(inputText)) {
+      setInputText('');
+      setErrorModalText(`${inputText} is already in the list.`);
+      setErrorModalVisible(true);
+      setTimeout(() => {
+        setErrorModalVisible(false);
+      }, 1000)
+    }
+    else {
+      setErrorModalText(`${inputText} is not a valid word.`);
+      setErrorModalVisible(true);
+      setInputText('');
+      setTimeout(() => {
+        setErrorModalVisible(false);
+      }, 1000)
     }
   };
 
@@ -126,8 +137,22 @@ export default function App() {
         </View>
       </Modal>
 
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={errorModalVisible}
+        onRequestClose={() => {
+          setErrorModalVisible(false);
+      }}>
+        <View style={styles.errorModalContainer}>
+          <View style={styles.errorModalContent}>
+            <Text style={styles.errorText}>{errorModalText}</Text>
+          </View>
+        </View>
+      </Modal>
+
       <View style = {styles.spellingBeeText}>
-      <Text style={styles.beeText}>{inputText}</Text>
+        <Text style={styles.beeText}>{inputText}</Text>
         {isCaretVisible && <View style={styles.caret} />}
       </View>
 
@@ -201,10 +226,29 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 5,
     backgroundColor: 'white',
-    padding: 20,
+    padding: 10,
     width: '90%',
     height: '80%',
     alignSelf: 'center',
+  },
+  errorModalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 450,
+  },
+  errorModalContent: {
+    borderColor: 'rgb(230,230,230)',
+    borderWidth: 2,
+    backgroundColor: 'white',
+    padding: 20,
+    width: '80%',
+    alignSelf: 'center',
+  },
+  errorText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   caret: {
     position: 'absolute',
